@@ -3,10 +3,7 @@
  * (https://github.com/jcoglan/faye/tree/master/examples)
  */
 var express = require('express'),
-    url     = require('url'),
-    https   = require('https'),
-    faye    = require('faye'),
-    request = require('request');
+    faye    = require('faye');
 
 var fayeServer = new faye.NodeAdapter({mount: '/faye', timeout: 20}),
     client     = fayeServer.getClient(),
