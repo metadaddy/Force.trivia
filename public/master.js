@@ -12,13 +12,8 @@ Master = {
         var self = this;
         this._client = client;
     
-        this._app     = $('#app');
         this._post    = $('#postMessage');
         this._stream  = $('#stream');
-    
-        this._app.hide();
-    
-        // TODO - OAuth
     
         self.launch();
     },
@@ -35,9 +30,6 @@ Master = {
         var subscription = self._client.subscribe('/quiz', self.accept, self);
   
         subscription.callback(function() {
-            // Show main application UI
-            self._app.fadeIn('slow');
-    
             self._post.submit(function() {
                 self._client.publish('/quiz', {type: 'next'});
                 self._stream.empty();

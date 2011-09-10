@@ -14,6 +14,8 @@ var app = express.createServer();
 
 app.use(express.static(__dirname + '/public'));
 
+// TODO - OAuth, retrieve questions etc
+
 fayeServer.attach(app);
 
 app.listen(Number(port));
