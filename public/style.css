@@ -9,6 +9,11 @@ body {
   width:        352px;
 }
 
+#page {
+    width: 320px;
+    height: 460px;
+}
+
 label {
   color:        #444;
   font-weight:  bold;
