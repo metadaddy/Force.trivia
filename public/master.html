@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <title>Force.trivia</title>
+  <link rel="stylesheet" href="/style.css" type="text/css" media="screen">
+  <script src="/jquery.js" type="text/javascript"></script>
+  <script src="/faye.js" type="text/javascript"></script>
+  <script src="/master.js" type="text/javascript"></script>
+  <!-- HTML Sanitizer from Google Caja http://google-caja.googlecode.com/ -->
+  <script src="/html-sanitizer-minified.js" type="text/javascript"></script>
+</head>
+<body>
+<div class="container">
+  
+  <h1>Force.trivia</h1>
+  
+  <div id="app">
+    <form id="postMessage">
+        <input type="submit" id="next" value="Next!" />
+    </form>
+    
+    <ul id="stream">
+    </ul>
+  </div>
+  
+  <script type="text/javascript">
+    Faye.Logging.logLevel = 'debug';
+    Faye.logger = function(msg) { if (window.console) console.log(msg) };
+    
+    var host = location.hostname,
+        port = location.port,
+        path = '/faye';
+
+    var client = new Faye.Client('http://' + host + (port ? ':' + port : '') + path);
+
+    Master.init(client);
+  </script>
+
+</div>  
+</body>
+</html>
+
