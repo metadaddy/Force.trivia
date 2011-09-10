@@ -20,6 +20,9 @@ Quiz = {
         this._app.hide();
     
         $('#username').focus();
+        
+        // Preload the button disabled image
+        $('<img>').attr({ src: 'bug_gray_3D_rgb.png' });
     
         // When the user enters a username, store it and start the app
         this._login.submit(function() {
