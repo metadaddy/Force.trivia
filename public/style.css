@@ -9,23 +9,6 @@ body {
   width:        352px;
 }
 
-h1, form {
-  background:   #fff;
-  padding:      24px;
-}
-
-h1 {
-  font-size:    20px;
-}
-
-h1 em {
-  font-style:   normal;
-  font-weight:  normal;
-  color:        #444;
-  text-transform: uppercase;
-  letter-spacing: -0.06em;
-}
-
 label {
   color:        #444;
   font-weight:  bold;
