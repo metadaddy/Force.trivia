@@ -21,9 +21,6 @@ Quiz = {
     
         $('#username').focus();
         
-        // Preload the button disabled image
-        $('<img>').attr({ src: 'bug_gray_3D_rgb.png' });
-    
         // When the user enters a username, store it and start the app
         this._login.submit(function() {
             self._username = $('#username').val();
@@ -47,10 +44,14 @@ Quiz = {
             // Append user name to Post message label
             $('#messageLabel').append(html.escapeAttrib(self._username));
 
-            // Hide login form, show main application UI
+            // Hide login form
             self._login.fadeOut('slow', function() {
-                self._app.fadeIn('slow', function() {
-                    $('#message').focus();
+                // Preload the button disabled image
+                $('<img>').attr({ src: 'bug_gray_3D_rgb.png' }).load(function() {
+                    // Show main application UI
+                    self._app.fadeIn('slow', function() {
+                        $('#message').focus();
+                    });
                 });
             });
     
