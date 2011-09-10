@@ -41,6 +41,9 @@ Quiz = {
         var subscription = self._client.subscribe('/quiz', self.accept, self);
   
         subscription.callback(function() {
+            // Append user name to Post message label
+            $('#messageLabel').append(html.escapeAttrib(self._username));
+
             // Hide login form, show main application UI
             self._login.fadeOut('slow', function() {
                 self._app.fadeIn('slow', function() {
