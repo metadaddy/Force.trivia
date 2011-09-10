@@ -7,15 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Force.trivia</title>
   <link rel="stylesheet" href="/style.css" type="text/css" media="screen">
-  <script src="/jquery.js" type="text/javascript"></script>
-  <script src="/faye.js" type="text/javascript"></script>
-  <script src="/master.js" type="text/javascript"></script>
-  <!-- HTML Sanitizer from Google Caja http://google-caja.googlecode.com/ -->
-  <script src="/html-sanitizer-minified.js" type="text/javascript"></script>
 </head>
 <body>
-<div class="container">
-  
   <h1>Force.trivia</h1>
   
   <div id="app">
@@ -27,6 +20,11 @@
     </ul>
   </div>
   
+  <script src="/jquery.js" type="text/javascript"></script>
+  <script src="/faye.js" type="text/javascript"></script>
+  <script src="/master.js" type="text/javascript"></script>
+  <!-- HTML Sanitizer from Google Caja http://google-caja.googlecode.com/ -->
+  <script src="/html-sanitizer-minified.js" type="text/javascript"></script>
   <script type="text/javascript">
     Faye.Logging.logLevel = 'debug';
     Faye.logger = function(msg) { if (window.console) console.log(msg) };
@@ -39,8 +37,6 @@
 
     Master.init(client);
   </script>
-
-</div>  
 </body>
 </html>
 
