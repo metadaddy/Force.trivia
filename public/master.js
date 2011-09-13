@@ -38,6 +38,8 @@ Master = {
     },
     
     nextQuestion: function() {
+        var self = this;
+    
         // Reset clients, increment Q number, show next question etc
         self._number++;
         self._players.empty();
