@@ -36,6 +36,40 @@ Master = {
         return 'Q: '+self._questions[number].Question__r.Question__c+
             '<br\>A: '+self._questions[number].Question__r.Answer__c;
     },
+    
+    nextQuestion: function() {
+        // Reset clients, increment Q number, show next question etc
+        self._number++;
+        self._players.empty();
+        if (self._number < self._questions.length) {
+            self._client.publish('/quiz', {type: 'next'});
+            $('#prompt').html(self.getQ(self._number));
+            self._question = true;                    
+        } else {
+            $('#prompt').html('Results');
+            $('#next').remove();
+            // Send user record to db
+            $.ajax({
+                type: 'GET',
+                url: '/highscores',
+                dataType: 'json',
+                data: { 
+                    Quiz__c: self._quizId
+                },
+                success: function(data) {
+                    console.log(data);
+                    $.each(data.records, function(index, value) { 
+                        self._players.append('<p>'+
+                            html.escapeAttrib(value.Name)+' '+
+                            value.Score__c+'</p>');                                    
+                    });
+                },
+                error: function(jqXHR, textStatus) {
+                    alert('Error getting high scores');
+                }
+            });                                            
+        }        
+    }
   
     /**
      * Starts the application after a username has been entered. A
@@ -71,43 +105,14 @@ Master = {
                                     Quiz__c: self._quizId
                                 },
                                 success: function(data) {
-                                    // We don't really need to do anything here
+                                    self.nextQuestion();                                    
                                 },
                                 error: function(jqXHR, textStatus) {
                                     alert('Error incrementing score for '+player);
                                 }
                             });                
-                        }
-                        // Reset clients, increment Q number, show next question etc
-                        self._number++;
-                        self._players.empty();
-                        if (self._number < self._questions.length) {
-                            self._client.publish('/quiz', {type: 'next'});
-                            $('#prompt').html(self.getQ(self._number));
-                            self._question = true;                    
                         } else {
-                            $('#prompt').html('Results');
-                            $('#next').remove();
-                            // Send user record to db
-                            $.ajax({
-                                type: 'GET',
-                                url: '/highscores',
-                                dataType: 'json',
-                                data: { 
-                                    Quiz__c: self._quizId
-                                },
-                                success: function(data) {
-                                    console.log(data);
-                                    $.each(data.records, function(index, value) { 
-                                        self._players.append('<p>'+
-                                            html.escapeAttrib(value.Name)+' '+
-                                            value.Score__c+'</p>');                                    
-                                    });
-                                },
-                                error: function(jqXHR, textStatus) {
-                                    alert('Error getting high scores');
-                                }
-                            });                                            
+                            self.nextQuestion();
                         }
                     }                    
                 }
