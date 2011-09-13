@@ -69,7 +69,7 @@ Master = {
                 }
             });                                            
         }        
-    }
+    },
   
     /**
      * Starts the application after a username has been entered. A
