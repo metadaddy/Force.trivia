@@ -59,35 +59,32 @@ Master = {
                         $('#prompt').html(self.getQnA(self._number));
                         self._question = false;
                     } else {
+                        // Increment the score for the appropriate player
+                        var player = $("input[@name='player']:checked").val();
+                        if (player) {
+                            // Increment player score
+                            $.ajax({
+                                type: 'POST',
+                                url: '/incscore',
+                                data: { 
+                                    Name: player,
+                                    Quiz__c: self._quizId
+                                },
+                                success: function(data) {
+                                    // We don't really need to do anything here
+                                },
+                                error: function(jqXHR, textStatus) {
+                                    alert('Error incrementing score for '+player);
+                                }
+                            });                
+                        }
                         // Reset clients, increment Q number, show next question etc
                         self._number++;
                         if (self._number < self._questions.length) {
-                            var player = $("input[@name='player']:checked").val();
-                            if (player) {
-                                // Increment player score
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '/incscore',
-                                    data: { 
-                                        Name: player,
-                                        Quiz__c: self._quizId
-                                    },
-                                    success: function(data) {
-                                        self._client.publish('/quiz', {type: 'next'});
-                                        $('#prompt').html(self.getQ(self._number));
-                                        self._players.empty();
-                                        self._question = true;                    
-                                    },
-                                    error: function(jqXHR, textStatus) {
-                                        alert('Error incrementing score for '+player);
-                                    }
-                                });                
-                            } else {
-                                self._client.publish('/quiz', {type: 'next'});
-                                $('#prompt').html(self.getQ(self._number));
-                                self._players.empty();
-                                self._question = true;                    
-                            }
+                            self._client.publish('/quiz', {type: 'next'});
+                            $('#prompt').html(self.getQ(self._number));
+                            self._players.empty();
+                            self._question = true;                    
                         } else {
                             $('#prompt').html('Results');
                             $('#next').remove();
