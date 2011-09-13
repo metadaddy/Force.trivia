@@ -80,10 +80,10 @@ Master = {
                         }
                         // Reset clients, increment Q number, show next question etc
                         self._number++;
+                        self._players.empty();
                         if (self._number < self._questions.length) {
                             self._client.publish('/quiz', {type: 'next'});
                             $('#prompt').html(self.getQ(self._number));
-                            self._players.empty();
                             self._question = true;                    
                         } else {
                             $('#prompt').html('Results');
