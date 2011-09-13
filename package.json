@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
 	"express": ">= 2.2.0",
-	"faye": ">= 0.6.5"
+	"faye": ">= 0.6.5",
+	"jade": ">= 0.14.2",
+	"restler": ">= 0.2.1"
   }
 }
