@@ -1,0 +1,24 @@
+script(src='/jquery.js', type='text/javascript')
+script(src='/faye.js', type='text/javascript')
+script(src='/master.js', type='text/javascript')
+script(src='/html-sanitizer-minified.js', type='text/javascript')
+script(src='/jquery.getQueryParam.js', type='text/javascript')
+script(type='text/javascript')
+    $(document).ready(function () {
+        Faye.Logging.logLevel = 'debug';
+        Faye.logger = function(msg) { if (window.console) console.log(msg) };
+
+        var host = location.hostname,
+            port = location.port,
+            path = '/faye';
+
+        var client = new Faye.Client('http://' + host + (port ? ':' + port : '') + path);
+
+        Master.init(client, $.getQueryParam("id"), JSON.parse(html.unescapeEntities('#{JSON.stringify(records)}')));
+    });
+#app
+    h3(id="prompt")
+    form(id="postMessage")
+        input(type="submit", id="next", value="Next!")
+        br
+        #players

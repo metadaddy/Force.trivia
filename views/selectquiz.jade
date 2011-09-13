@@ -1,0 +1,6 @@
+h2 Select Quiz
+form
+    select(name='id')
+        - for (var i in records)
+            option(value="#{records[i].Id}") #{records[i].Date__c} #{records[i].Location__c}
+    input(type='submit', value='Go')
