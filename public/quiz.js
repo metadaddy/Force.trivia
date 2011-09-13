@@ -31,7 +31,11 @@ Quiz = {
         
         // When the user enters handle/name, store them and start the app
         this._login.submit(function() {
-            setTimeout(function(){
+            if ( self._timeout ) {
+                window.clearTimeout(self._timeout);
+            }
+            self._timeout = setTimeout(function(){
+                self._timeout = null;
                 alert('No reply from the quizmaster - check that the quiz has started and try again!');
             }, 10*1000);
             self._handle = $('#handle').val();
@@ -67,6 +71,10 @@ Quiz = {
             $('#buzz').attr('src', 'bug_blue_3D_rgb.png');
         } else if (message.type === 'userok' && message.handle === self._handle) {
             if (message.ok) {
+                if ( self._timeout ) {
+                    window.clearTimeout(self._timeout);
+                }
+                
                 // Append user name to Post message label
                 $('#messageLabel').html(html.escapeAttrib(self._handle));
 

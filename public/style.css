@@ -15,8 +15,10 @@ body {
 }
 
 label {
+  margin-top:   25px;
   color:        #444;
   font-weight:  bold;
+  display:      block;
 }
 
 ul, li {
