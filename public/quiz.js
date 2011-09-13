@@ -31,7 +31,9 @@ Quiz = {
         
         // When the user enters handle/name, store them and start the app
         this._login.submit(function() {
-            $('#error').empty();
+            setTimeout(function(){
+                alert('No reply from the quizmaster - check that the quiz has started and try again!');
+            }, 10*1000);
             self._handle = $('#handle').val();
             self._name = $('#name').val();
             self.launch();
@@ -86,7 +88,7 @@ Quiz = {
                     return false;
                 });
             } else {
-                $('#error').html('<h2>'+html.escapeAttrib(message.error)+'</h2>');
+                alert(html.escapeAttrib(message.error));
             }
         }
     }
