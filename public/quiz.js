@@ -68,7 +68,7 @@ Quiz = {
     
         if (message.type === 'next') {
             $('#buzz').removeAttr('disabled');
-            $('#buzz').attr('src', 'bug_blue_3D_rgb.png');
+            $('#buzz').attr('src', 'button-red.png');
         } else if (message.type === 'userok' && message.handle === self._handle) {
             if (message.ok) {
                 if ( self._timeout ) {
@@ -81,7 +81,7 @@ Quiz = {
                 // Hide login form
                 self._login.fadeOut('slow', function() {
                     // Preload the button disabled image
-                    $('<img>').attr({ src: 'bug_gray_3D_rgb.png' }).load(function() {
+                    $('<img>').attr({ src: 'button-gray.png' }).load(function() {
                         // Show main application UI
                         self._app.fadeIn('slow', function() {
                             $('#message').focus();
@@ -92,7 +92,7 @@ Quiz = {
                 self._post.submit(function() {
                     self._client.publish('/quiz', {user: self._handle, type: 'buzz'});
                     $('#buzz').attr('disabled', 'disabled');
-                    $('#buzz').attr('src', 'bug_gray_3D_rgb.png');
+                    $('#buzz').attr('src', 'button-gray.png');
                     return false;
                 });
             } else {

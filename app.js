@@ -1,5 +1,5 @@
 /*
- * Faye Chat server adapted from Soapbox by James Coglan
+ * Faye Quiz server adapted from Soapbox by James Coglan
  * (https://github.com/jcoglan/faye/tree/master/examples)
  */
 var express = require('express'),

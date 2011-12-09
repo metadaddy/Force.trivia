@@ -46,6 +46,7 @@ Master = {
         if (self._number < self._questions.length) {
             self._client.publish('/quiz', {type: 'next'});
             $('#prompt').html(self.getQ(self._number));
+            $('#next').attr('value', 'Show Answer');
             self._question = true;                    
         } else {
             $('#prompt').html('Results');
@@ -75,15 +76,17 @@ Master = {
   
     /**
      * Starts the application after a username has been entered. A
-     * subscription is made to receive all messages on the channel,
-     * and a form is set up to send messages.
+     * subscription is made to receive all messages on the channel.
      */
     launch: function() {
         var self = this;
     
         // Subscribe to the chat channels
         var subscription = self._client.subscribe('/quiz', self.accept, self);
-        
+
+        // Reset state on all the clients
+        self._client.publish('/quiz', {type: 'next'});
+
         // Show first question
         $('#prompt').html(self.getQ(self._number));
   
@@ -91,8 +94,9 @@ Master = {
             self._post.submit(function() {
                 if (self._number < self._questions.length) {
                     if (self._question) {
-                        // Just show question & answer and toggle _question flag
                         $('#prompt').html(self.getQnA(self._number));
+                        $('#next').attr('value', 'Next Question');
+                        $("#players input").removeAttr('disabled');
                         self._question = false;
                     } else {
                         // Increment the score for the appropriate player
@@ -126,6 +130,17 @@ Master = {
             alert("Error subscribing: " + error.message);
         });
     },
+    
+    returnUserStatus: function(handle, status, error) {
+        var self = this;
+        
+        self._client.publish('/quiz', {
+            handle: handle, 
+            type: 'userok',
+            ok: status,
+            error: error
+        });
+    },
   
     /**
      * Handler for received messages.
@@ -134,7 +149,7 @@ Master = {
         var self = this;
         
         if (message.type === 'buzz') {
-            self._players.append('<input type="radio" name="player" value="'+
+            self._players.append('<input type="radio" name="player" disabled="true" value="'+
                 html.escapeAttrib(message.user)+'">'+html.escapeAttrib(message.user)+'<br/>');
         } else if (message.type === 'user') {
             // Send user record to db
@@ -147,19 +162,21 @@ Master = {
                     Quiz__c: self._quizId
                 },
                 success: function(data) {
-                    self._client.publish('/quiz', {
-                        handle: message.handle, 
-                        type: 'userok',
-                        ok: true
-                    });
+                    self.returnUserStatus(message.handle, true);
                 },
                 error: function(jqXHR, textStatus) {
-                    self._client.publish('/quiz', {
-                        handle: message.handle, 
-                        type: 'userok',
-                        ok: false,
-                        error: 'Error - try another handle'
-                    });                    
+                    // jQuery doesn't parse the body in the event of an error
+                    var result = JSON.parse(jqXHR.responseText);
+                    if (result[0].errorCode == 'FIELD_CUSTOM_VALIDATION_EXCEPTION') {
+                        // Don't care about duplicate users
+                        self.returnUserStatus(message.handle, true);
+                    } else {
+                        // Something weird has happened!
+                        self.returnUserStatus(message.handle, false, 
+                            result[0].message);
+                        alert('Error creating user: '+result[0].errorCode+
+                            ' '+result[0].message);
+                    }
                 }
             });                
         }
