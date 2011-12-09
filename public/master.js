@@ -42,7 +42,7 @@ Master = {
         // Reset clients, increment Q number, show next question etc
         self._number++;
         self._players.empty();
-				self._players.append("<li data-role='list-divider'>Buzzed In</li>")
+		self._players.append("<li data-role='list-divider'>Buzzed In</li>")
         if (self._number < self._questions.length) {
             self._client.publish('/quiz', {type: 'next'});
             $('#prompt').html(self.getQ(self._number));
@@ -104,8 +104,6 @@ Master = {
                         var player = $("input[@name='player']:checked").val();
                         if (player) {
                             // Increment player score
-														console.log("playername=" + player);
-														console.log("quizid=" + self._quizId);
                             $.ajax({
                                 type: 'POST',
                                 url: '/incscore',
@@ -152,9 +150,9 @@ Master = {
         var self = this;
         
         if (message.type === 'buzz') {
-					var now = new Date();
-          self._players.append('<li class="ui-li ui-li-static ui-body-c"><input type="radio" name="player" value="'+
-              html.escapeAttrib(message.user)+'"/>' + html.escapeAttrib(message.user) + ' (' + formatTime(now) + ')</li>');
+			var now = new Date();
+            self._players.append('<li class="ui-li ui-li-static ui-body-c"><input type="radio" name="player" value="'+
+            html.escapeAttrib(message.user)+'"/>' + html.escapeAttrib(message.user) + ' (' + formatTime(now) + ')</li>');
         } else if (message.type === 'user') {
             // Send user record to db
             $.ajax({
@@ -167,11 +165,6 @@ Master = {
                 },
                 success: function(data) {
                     self.returnUserStatus(message.handle, true);
-                    self._client.publish('/quiz', {
-                        handle: message.handle, 
-                        type: 'userok',
-                        ok: true
-                    });
 				    self._playing.append('<li class="ui-li ui-li-static ui-body-c">' + message.handle + "</li>");
                 },
                 error: function(jqXHR, textStatus) {
