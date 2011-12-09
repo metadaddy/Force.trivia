@@ -1,0 +1,12 @@
+<h2>Select Quiz</h2>
+<form>
+    <select name='id'>
+        <% records.forEach(function(record) { 
+			console.log("Just one record: " + record.Date__c); %>
+            <option value="<%= record.Id %>">
+				<%= record.Date__c + " " + record.Location__c %>
+			</option>
+		<% }) %>
+	</select>
+    <input type='submit', value='Go'/>
+</form>
