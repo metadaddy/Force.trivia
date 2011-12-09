@@ -31,6 +31,7 @@ Quiz = {
         
         // When the user enters handle/name, store them and start the app
         this._login.submit(function() {
+          $('#error').empty();
             if ( self._timeout ) {
                 window.clearTimeout(self._timeout);
             }

@@ -1,0 +1,57 @@
+<head>
+	<script type='text/javascript'>
+		$(document).ready(function () {
+			Faye.Logging.logLevel = 'debug';
+			Faye.logger = function(msg) { if (window.console) console.log(msg) };
+
+			var host = location.hostname,
+			port = location.port,
+			path = '/faye';
+
+			var client = new Faye.Client('http://' + host + (port ? ':' + port : '') + path);
+
+			Master.init(client, $.getQueryParam("id"), JSON.parse(html.unescapeEntities('<%= JSON.stringify(records)%>')));
+		});
+	</script>
+</head>
+<body>
+	<div data-role="page" class="type-interior">
+
+		<div id="banner-content" data-role="header" data-theme="b"> 
+			<h2>Force.com Trivia</h2>
+		</div>
+		
+		<div data-role="content">
+		
+			<div id="main-content" class="content-primary">
+				<div id="qh" style="font-size: 24pt; text-align: left; font-weight: bold;"> 		
+					Question:
+				</div>
+				<div id="app">
+					<div>
+						<span id="prompt" class="question" style="text-align: left;" />
+					</div>
+					<div id="qf" data-theme="c">
+						<form id="postMessage">
+							<input type="submit" id="next", value="Next!" />
+							<br/>
+							<h2 style="text-align: left;">Buzzed In</h2>
+							<ul data-role="listview" id="players">
+							</ul>
+						</form>
+					</div>
+				</div>
+			</div> <!-- end main-content -->
+			
+			<div id="contestants" class="content-secondary">
+				<div id="names" data-role="collapsible" data-collapsed="true" data-them="b" data-content-theme="d">
+					<ul id="playing" data-divider-theme="d" data-theme="c" data-role="listview" style="margin: 0px;">
+						<li data-role="list-divider">Contestants</li>
+					</ul>
+				</div>
+			</div> <!-- end content-secondary -->
+			
+			
+		</div> <!-- end content -->
+	</div> <!-- end page -->
+</body>

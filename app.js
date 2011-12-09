@@ -14,18 +14,25 @@ var fayeServer = new faye.NodeAdapter({mount: '/faye', timeout: 20}),
 var app = express.createServer(
     express.bodyParser(),
     express.cookieParser(),
+		express.logger(),
     express.session({ secret: process.env.CLIENT_SECRET }),
     express.query());
     
 var oauthMiddleware = oauth.oauth({
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    loginServer: process.env.LOGIN_SERVER,
-    redirectUri: process.env.REDIRECT_URI
-});
-    
+   	clientId: process.env.CLIENT_ID,
+   	clientSecret: process.env.CLIENT_SECRET,
+   	loginServer: process.env.LOGIN_SERVER,
+   	redirectUri: process.env.REDIRECT_URI
+	});
+
+console.log(process.argv[2]);
+
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+if (process.argv.length > 2) {
+	app.set('view engine', process.argv[2]);
+} else {
+	app.set('view engine', 'jade');
+}
 
 // Require OAuth login at /master.html
 app.get('/master', oauthMiddleware, function(req, res) {
@@ -44,12 +51,20 @@ app.get('/master', oauthMiddleware, function(req, res) {
 });
 
 app.post('/player', oauthMiddleware, function(req, res) {
-    rest.api(req).create('Player__c', req.body, function(data){
-        res.send(data);
-    }, function(data, response){
-        res.send(data, response.statusCode);
-    });
-});
+		console.log("In the app.post handler...");
+		console.log("req body:\n" + JSON.stringify(req.body));
+		rest.api(req).query("Select Id, Name, Name__c From Player__c Where Quiz__c = '" + req.body.Quiz__c + "' AND Name = '" + req.body.Name + "'", function(data) {
+			if (data.totalSize == 0) {
+				rest.api(req).create('Player__c', req.body, function(data){
+		    	res.send(data);
+		    	}, function(data, response){
+		        res.send(data, response.statusCode);
+		    	});
+			}else {
+				res.send(data);
+			}
+		});
+	});
 
 app.post('/incscore', oauthMiddleware, function(req, res) {
     var restClient = rest.api(req);
