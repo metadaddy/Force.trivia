@@ -19,13 +19,12 @@ Master = {
     
         self._post    = $('#postMessage');
         self._players = $('#players');
-    
+    		self._playing = $('#playing');
         self.launch();
     },
     
     getQ: function(number) {
         var self = this;
-    
         return 'Q: '+self._questions[number].Question__r.Question__c+
             '<br\><br\>';
     },
@@ -43,6 +42,7 @@ Master = {
         // Reset clients, increment Q number, show next question etc
         self._number++;
         self._players.empty();
+				self._players.append("<li data-role='list-divider'>Buzzed In</li>")
         if (self._number < self._questions.length) {
             self._client.publish('/quiz', {type: 'next'});
             $('#prompt').html(self.getQ(self._number));
@@ -93,12 +93,15 @@ Master = {
                     if (self._question) {
                         // Just show question & answer and toggle _question flag
                         $('#prompt').html(self.getQnA(self._number));
+												//alert(self.getQnA(self._number));
                         self._question = false;
                     } else {
                         // Increment the score for the appropriate player
                         var player = $("input[@name='player']:checked").val();
                         if (player) {
                             // Increment player score
+														console.log("playername=" + player);
+														console.log("quizid=" + self._quizId);
                             $.ajax({
                                 type: 'POST',
                                 url: '/incscore',
@@ -134,8 +137,9 @@ Master = {
         var self = this;
         
         if (message.type === 'buzz') {
-            self._players.append('<input type="radio" name="player" value="'+
-                html.escapeAttrib(message.user)+'">'+html.escapeAttrib(message.user)+'<br/>');
+					var now = new Date();
+          self._players.append('<li class="ui-li ui-li-static ui-body-c"><input type="radio" name="player" value="'+
+              html.escapeAttrib(message.user)+'"/>' + html.escapeAttrib(message.user) + ' (' + formatTime(now) + ')</li>');
         } else if (message.type === 'user') {
             // Send user record to db
             $.ajax({
@@ -152,6 +156,7 @@ Master = {
                         type: 'userok',
                         ok: true
                     });
+										self._playing.append('<li class="ui-li ui-li-static ui-body-c">' + message.handle + "</li>");
                 },
                 error: function(jqXHR, textStatus) {
                     self._client.publish('/quiz', {
