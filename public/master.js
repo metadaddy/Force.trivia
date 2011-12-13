@@ -20,20 +20,34 @@ Master = {
         self._post    = $('#postMessage');
         self._players = $('#players');
     		self._playing = $('#playing');
+				self._nextp = $('#nextp');
+				self._page = $('#one');
         self.launch();
     },
     
     getQ: function(number) {
-        var self = this;
-        return 'Q: '+self._questions[number].Question__r.Question__c+
-            '<br\><br\>';
+				var self = this;
+				if (number == 0) {
+					$('#prompt').addClass("rollin");					
+				} else {
+					$('#prompt').removeClass('rollin');
+					$('#prompt').addClass('hinge');
+					setTimeout(function() {
+						$('#prompt').removeClass('hinge');
+						$('#prompt').html('<p>' + self._questions[number].Question__r.Question__c +
+			            '</p><p></p>');
+						$('#prompt').addClass('rollin');
+					}, 1200);
+				}
+       return '<p>' + self._questions[number].Question__r.Question__c +
+            '</p><p></p>';
     },
   
     getQnA: function(number) {
         var self = this;
-    
-        return 'Q: '+self._questions[number].Question__r.Question__c+
-            '<br\>A: '+self._questions[number].Question__r.Answer__c;
+        return '<p>' + self._questions[number].Question__r.Question__c +
+            '</p><p>A: ' + self._questions[number].Question__r.Answer__c + "</p>";
+						
     },
     
     nextQuestion: function() {
@@ -45,7 +59,8 @@ Master = {
 				self._players.append("<li data-role='list-divider'>Buzzed In</li>")
         if (self._number < self._questions.length) {
             self._client.publish('/quiz', {type: 'next'});
-            $('#prompt').html(self.getQ(self._number));
+						self.getQ(self._number);
+						//$('#prompt').html(self.getQ(self._number));
             self._question = true;                    
         } else {
             $('#prompt').html('Results');
@@ -93,8 +108,11 @@ Master = {
                     if (self._question) {
                         // Just show question & answer and toggle _question flag
                         $('#prompt').html(self.getQnA(self._number));
+												self._page.attr("id", "two");
+												self._page.attr("data-url", "two");
 												//alert(self.getQnA(self._number));
                         self._question = false;
+												self._nextp.attr("href", "#two");
                     } else {
                         // Increment the score for the appropriate player
                         var player = $("input[@name='player']:checked").val();

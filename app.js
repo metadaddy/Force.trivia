@@ -15,14 +15,20 @@ var app = express.createServer(
     express.bodyParser(),
     express.cookieParser(),
 		express.logger(),
-    express.session({ secret: process.env.CLIENT_SECRET }),
+    express.session({ secret: process.env.CLIENT_SECRET  || "1088793090219252439"}),
     express.query());
     
-var oauthMiddleware = oauth.oauth({
+/*var oauthMiddleware = oauth.oauth({
    	clientId: process.env.CLIENT_ID,
    	clientSecret: process.env.CLIENT_SECRET,
    	loginServer: process.env.LOGIN_SERVER,
    	redirectUri: process.env.REDIRECT_URI
+	});*/
+	var oauthMiddleware = oauth.oauth({
+	    clientId: process.env.CLIENT_ID || "3MVG9QDx8IX8nP5RwKyTXo_vDe8bDN9A8i174wBFpLpu.wRNZ_OcBf0uVdIE4YQwhSOmyr7MqgVfibT.db47u",
+	    clientSecret: process.env.CLIENT_SECRET || "1088793090219252439",
+	    loginServer: process.env.LOGIN_SERVER || "https://login.salesforce.com",
+	    redirectUri: process.env.REDIRECT_URI || "http://localhost:8000/master"
 	});
 
 console.log(process.argv[2]);
