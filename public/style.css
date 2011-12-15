@@ -8,7 +8,9 @@ body {
 .input {
   width:        352px;
 }
-
+.left {
+	text-align: left;
+}
 #page {
     width: 320px;
     height: 460px;
@@ -26,3 +28,42 @@ ul, li {
   margin:       0;
   padding:      0;
 }
+
+#prompt {
+	text-align: left;
+	background: #39c;
+	padding: 40px;
+	width: 80%;
+	color: #fff;
+	margin: 0 auto;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 26px;
+	
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	backface-visibility: hidden;
+	
+	-webkit-animation-duration: 1s;
+	-webkit-animation-delay: .2s;
+	-webkit-animation-timing-function: ease;
+	-webkit-animation-fill-mode: both;
+	-moz-animation-duration: 1s;
+	-moz-animation-delay: .2s;
+	-moz-animation-timing-function: ease;
+	-moz-animation-fill-mode: both;
+	-ms-animation-duration: 1s;
+	-ms-animation-delay: .2s;
+	-ms-animation-timing-function: ease;
+	-ms-animation-fill-mode: both;
+	animation-duration: 1s;
+	animation-delay: .2s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+#prompt p {
+	margin: 0;
+}
+
