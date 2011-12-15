@@ -7,7 +7,14 @@
 			var host = location.hostname,
 			port = location.port,
 			path = '/faye';
-
+			$('#prompt').hover(
+						function() {
+							$(this).addClass("flip");
+						},
+						function() {
+							$(this).removeClass("flip");
+						}
+						);
 			var client = new Faye.Client('http://' + host + (port ? ':' + port : '') + path);
 
 			Master.init(client, $.getQueryParam("id"), JSON.parse(html.unescapeEntities('<%= JSON.stringify(records)%>')));
@@ -15,7 +22,7 @@
 	</script>
 </head>
 <body>
-	<div data-role="page" class="type-interior">
+	<div data-role="page" class="type-interior" id="one">
 
 		<div id="banner-content" data-role="header" data-theme="b"> 
 			<h2>Force.com Trivia</h2>
@@ -26,10 +33,9 @@
 			<div id="main-content" class="content-primary">
 				<div id="qh" style="font-size: 24pt; text-align: left; font-weight: bold;"> 		
 					Question:
-				</div>
-				<div id="app">
-					<div>
-						<span id="prompt" class="question" style="text-align: left;" />
+					<div style="text-align: left">
+						<div id="prompt" class="" >
+						</div>
 					</div>
 					<div id="qf" data-theme="c">
 						<form id="postMessage">
@@ -54,4 +60,11 @@
 			
 		</div> <!-- end content -->
 	</div> <!-- end page -->
+	<script>
+		var el = document.getElementById('prompt');
+		el.addEventListener("webkitTransitionEnd", function() {
+			this.className = "cssVisible";
+		}, true);
+		
+	</script>
 </body>

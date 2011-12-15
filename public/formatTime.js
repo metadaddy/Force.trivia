@@ -35,4 +35,4 @@ function getSeconds(v) {
 		}
 	}
 }
-start();
+//start();
