@@ -56,7 +56,6 @@ Master = {
         // Reset clients, increment Q number, show next question etc
         self._number++;
         self._players.empty();
-		self._players.append("<li data-role='list-divider'>Buzzed In</li>")
         if (self._number < self._questions.length) {
             self._client.publish('/quiz', {type: 'next'});
             self.getQ(self._number);
