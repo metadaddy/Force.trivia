@@ -19,24 +19,35 @@ Master = {
     
         self._post    = $('#postMessage');
         self._players = $('#players');
-    		self._playing = $('#playing');
-				self._nextp = $('#nextp');
-				self._page = $('#one');
+    	self._playing = $('#playing');
+		self._nextp   = $('#nextp');
+		self._page    = $('#one');
+		self._prompt  = $('#prompt');
         self.launch();
     },
     
+    setButtonText: function(elem, text) {
+        // Handle jQuery Mobile 'fake' buttons
+        if ( elem.hasClass('ui-btn-hidden')) {
+            elem.prev('.ui-btn-inner').children('.ui-btn-text').html(text);                            
+        } else {
+            elem.attr('value', text);
+        }
+    },
+  
     getQ: function(number) {
 				var self = this;
 				if (number == 0) {
-					$('#prompt').addClass("rollin");					
+					self._prompt.addClass("rollin");					
 				} else {
-					$('#prompt').removeClass('rollin');
-					$('#prompt').addClass('hinge');
+					self._prompt.removeClass('rollin');
+					self._prompt.addClass('hinge');
 					setTimeout(function() {
-						$('#prompt').removeClass('hinge');
-						$('#prompt').html('<p>' + self._questions[number].Question__r.Question__c +
+						self._prompt.removeClass('hinge');
+						self._prompt.html('<p>' + self._questions[number].Question__r.Question__c +
 			            '</p><p></p>');
-						$('#prompt').addClass('rollin');
+						self._prompt.addClass('rollin');
+                        self.setButtonText($('#next'), 'Show Answer');
 					}, 1200);
 				}
        return '<p>' + self._questions[number].Question__r.Question__c +
@@ -61,7 +72,7 @@ Master = {
             self.getQ(self._number);
             self._question = true;                    
         } else {
-            $('#prompt').html('Results');
+            self._prompt.html('Results');
             $('#next').remove();
             // Send user record to db
             $.ajax({
@@ -85,7 +96,7 @@ Master = {
             });                                            
         }        
     },
-  
+    
     /**
      * Starts the application after a username has been entered. A
      * subscription is made to receive all messages on the channel.
@@ -100,17 +111,18 @@ Master = {
         self._client.publish('/quiz', {type: 'next'});
 
         // Show first question
-        $('#prompt').html(self.getQ(self._number));
+        self._prompt.html(self.getQ(self._number));
   
         subscription.callback(function() {
             self._post.submit(function() {
                 if (self._number < self._questions.length) {
                     if (self._question) {
-                        $('#prompt').html(self.getQnA(self._number));
+                        self._prompt.html(self.getQnA(self._number));
+                        self.setButtonText($('#next'), 'Next Question');
 						self._page.attr("id", "two");
 						self._page.attr("data-url", "two");
                         self._question = false;
-												self._nextp.attr("href", "#two");
+						self._nextp.attr("href", "#two");
                     } else {
                         // Increment the score for the appropriate player
                         var player = $("input[@name='player']:checked").val();
