@@ -83,6 +83,19 @@ app.post('/incscore', oauthMiddleware, function(req, res) {
 	});
 });
 
+app.get('/question', oauthMiddleware, function(req, res) {
+    rest.api(req).query("SELECT Question_Number__c FROM Quiz__c WHERE Id = '"+req.query.Quiz__c+"'", function(data) {
+	    console.log(data);
+        res.send(data);
+	});
+});
+
+app.post('/question', oauthMiddleware, function(req, res) {
+        rest.api(req).update('Quiz__c', req.body.Quiz__c, { Question_Number__c: req.body.Question_Number__c }, function(data) {
+	        res.end();
+	    });
+	});
+
 app.get('/highscores', oauthMiddleware, function(req, res) {
     rest.api(req).query("SELECT Id, Name, Score__c FROM Player__c WHERE Quiz__c = '"+req.query.Quiz__c+"' ORDER BY Score__c DESC", function(data) {
 	    console.log(data);

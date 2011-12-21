@@ -12,18 +12,34 @@ Master = {
         var self = this;
         
         self._client = client;
-        self._questions = questions;
-        self._number = 0;
-        self._question = true;
         self._quizId = id;
-    
+        self._questions = questions;
+        self._question = true;
+        
         self._post    = $('#postMessage');
         self._players = $('#players');
     	self._playing = $('#playing');
 		self._nextp   = $('#nextp');
 		self._page    = $('#one');
 		self._prompt  = $('#prompt');
-        self.launch();
+		
+        $.ajax({
+            type: 'GET',
+            url: '/question',
+            dataType: 'json',
+            data: { 
+                Quiz__c: self._quizId
+            },
+            success: function(data) {
+                console.log(data);
+                self._number = parseInt(data.records[0].Question_Number__c);
+
+                self.launch();
+            },
+            error: function(jqXHR, textStatus) {
+                alert('Error getting current question');
+            }
+        });        
     },
     
     setButtonText: function(elem, text) {
@@ -36,28 +52,30 @@ Master = {
     },
   
     getQ: function(number) {
-				var self = this;
-				if (number == 0) {
-					self._prompt.addClass("rollin");					
-				} else {
-					self._prompt.removeClass('rollin');
-					self._prompt.addClass('hinge');
-					setTimeout(function() {
-						self._prompt.removeClass('hinge');
-						self._prompt.html('<p>' + self._questions[number].Question__r.Question__c +
-			            '</p><p></p>');
-						self._prompt.addClass('rollin');
-                        self.setButtonText($('#next'), 'Show Answer');
-					}, 1200);
-				}
-       return '<p>' + self._questions[number].Question__r.Question__c +
+		var self = this,
+		    questionText = '<p>' + self._questions[number-1].Question__r.Question__c +
             '</p><p></p>';
+
+		if (self._prompt.hasClass('rollin')) {
+			self._prompt.removeClass('rollin');
+			self._prompt.addClass('hinge');
+			setTimeout(function() {
+				self._prompt.removeClass('hinge');
+				self._prompt.html(questionText);
+				self._prompt.addClass('rollin');
+                self.setButtonText($('#next'), 'Show Answer');
+			}, 1200);
+		} else {
+			self._prompt.html(questionText);		
+			self._prompt.addClass("rollin");		
+		    self._prompt.css({visibility: "visible"});
+		}
     },
   
     getQnA: function(number) {
         var self = this;
-        return '<p>' + self._questions[number].Question__r.Question__c +
-            '</p><p>A: ' + self._questions[number].Question__r.Answer__c + "</p>";
+        return '<p>' + self._questions[number-1].Question__r.Question__c +
+            '</p><p>A: ' + self._questions[number-1].Question__r.Answer__c + "</p>";
 						
     },
     
@@ -66,35 +84,47 @@ Master = {
     
         // Reset clients, increment Q number, show next question etc
         self._number++;
-        self._players.empty();
-        if (self._number < self._questions.length) {
-            self._client.publish('/quiz', {type: 'next'});
-            self.getQ(self._number);
-            self._question = true;                    
-        } else {
-            self._prompt.html('Results');
-            $('#next').remove();
-            // Send user record to db
-            $.ajax({
-                type: 'GET',
-                url: '/highscores',
-                dataType: 'json',
-                data: { 
-                    Quiz__c: self._quizId
-                },
-                success: function(data) {
-                    console.log(data);
-                    $.each(data.records, function(index, value) { 
-                        self._players.append('<p>'+
-                            html.escapeAttrib(value.Name)+' '+
-                            value.Score__c+'</p>');                                    
-                    });
-                },
-                error: function(jqXHR, textStatus) {
-                    alert('Error getting high scores');
-                }
-            });                                            
-        }        
+        $.ajax({
+            type: 'POST',
+            url: '/question',
+            data: { 
+                Quiz__c: self._quizId,
+                Question_Number__c: self._number
+            },
+            success: function(data) {
+                self._players.empty();
+                if (self._number <= self._questions.length) {
+                    self._client.publish('/quiz', {type: 'next'});
+                    self.getQ(self._number);
+                    self._question = true;                    
+                } else {
+                    self._prompt.html('Results');
+                    $('#next').remove();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/highscores',
+                        dataType: 'json',
+                        data: { 
+                            Quiz__c: self._quizId
+                        },
+                        success: function(data) {
+                            console.log(data);
+                            $.each(data.records, function(index, value) { 
+                                self._players.append('<p>'+
+                                    html.escapeAttrib(value.Name)+' '+
+                                    value.Score__c+'</p>');                                    
+                            });
+                        },
+                        error: function(jqXHR, textStatus) {
+                            alert('Error getting high scores');
+                        }
+                    });                                            
+                }        
+            },
+            error: function(jqXHR, textStatus) {
+                alert('Error incrementing question');
+            }
+        });
     },
     
     /**
@@ -111,11 +141,11 @@ Master = {
         self._client.publish('/quiz', {type: 'next'});
 
         // Show first question
-        self._prompt.html(self.getQ(self._number));
+        self.getQ(self._number);
   
         subscription.callback(function() {
             self._post.submit(function() {
-                if (self._number < self._questions.length) {
+                if (self._number <= self._questions.length) {
                     if (self._question) {
                         self._prompt.html(self.getQnA(self._number));
                         self.setButtonText($('#next'), 'Next Question');
